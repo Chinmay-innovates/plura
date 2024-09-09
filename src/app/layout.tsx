@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-
-import { dark } from "@clerk/themes";
-import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/theme-provider";
 
 import "./globals.css";
 
-import { DM_Sans } from "next/font/google"; 
+import { DM_Sans } from "next/font/google";
 const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -20,23 +17,17 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<ClerkProvider
-			appearance={{
-				baseTheme: dark,
-			}}
-		>
-			<html lang="en" suppressHydrationWarning>
-				<body className={font.className}>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="system"
-						enableSystem
-						disableTransitionOnChange
-					>
-						{children}
-					</ThemeProvider>
-				</body>
-			</html>
-		</ClerkProvider>
+		<html lang="en" suppressHydrationWarning>
+			<body className={font.className}>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					{children}
+				</ThemeProvider>
+			</body>
+		</html>
 	);
 }

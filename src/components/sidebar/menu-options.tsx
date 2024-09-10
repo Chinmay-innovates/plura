@@ -243,7 +243,7 @@ export const MenuOptions = ({
 										if (result) val = <result.path />;
 										return (
 											<CommandItem
-												key={id}
+												key={sidebarOptions.name}
 												className="md:w-[350px] w-full"
 											>
 												<Link

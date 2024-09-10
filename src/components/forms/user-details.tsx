@@ -149,7 +149,7 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
 			});
 		}
 
-		if (response !== undefined) {
+		if (response) {
 			toast({
 				title: "Success",
 				description: "The request was successfull",

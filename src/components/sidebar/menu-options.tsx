@@ -9,7 +9,14 @@ import {
 import React, { useEffect, useMemo, useState } from "react";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { ChevronsUpDown, Compass, Menu, PlusCircleIcon } from "lucide-react";
+import {
+	ChevronsUpDown,
+	Compass,
+	Menu,
+	PlusCircleIcon,
+	SearchXIcon,
+	UserSearchIcon,
+} from "lucide-react";
 import clsx from "clsx";
 import { AspectRatio } from "../ui/aspect-ratio";
 import Image from "next/image";
@@ -26,6 +33,9 @@ import Link from "next/link";
 import { Separator } from "../ui/separator";
 import { icons } from "@/lib/constants";
 
+import AgencySidebar from "./agency-sidebar";
+import SubAccountSidebar from "./agency-sidebar";
+
 type Props = {
 	defaultOpen?: boolean;
 	subAccounts: SubAccount[];
@@ -36,7 +46,7 @@ type Props = {
 	id: string;
 };
 
-const MenuOptions = ({
+export const MenuOptions = ({
 	details,
 	id,
 	sidebarLogo,
@@ -45,7 +55,6 @@ const MenuOptions = ({
 	user,
 	defaultOpen,
 }: Props) => {
-	// const { setOpen } = useModal();
 	const [isMounted, setIsMounted] = useState(false);
 
 	const openState = useMemo(
@@ -76,7 +85,7 @@ const MenuOptions = ({
 				className={clsx(
 					"bg-background/80 backdrop-blur-xl fixed top-0 border-r-[1px] p-6",
 					{
-						"hidden md:inline-block z-0 w-[300px]": defaultOpen,
+						"hidden md:inline-block z-0 w-[350px]": defaultOpen,
 						"inline-block md:hidden z-[100] w-full": !defaultOpen,
 					}
 				)}
@@ -114,53 +123,32 @@ const MenuOptions = ({
 							<Command className="rounded-lg">
 								<CommandInput placeholder="Search Accounts..." />
 								<CommandList className="pb-16">
-									<CommandEmpty> No results found</CommandEmpty>
+									<CommandEmpty>
+										<span className="flex flex-col items-center text-muted-foreground">
+											<UserSearchIcon className="size-6 mb-2 items-center text-muted" />
+											No results found
+										</span>
+									</CommandEmpty>
 									{(user?.role === "AGENCY_OWNER" ||
 										user?.role === "AGENCY_ADMIN") &&
 										user?.Agency && (
 											<CommandGroup heading="Agency">
 												<CommandItem className="!bg-transparent my-2 text-primary broder-[1px] border-border p-2 rounded-md hover:!bg-muted cursor-pointer transition-all">
 													{defaultOpen ? (
-														<Link
+														<AgencySidebar
 															href={`/agency/${user?.Agency?.id}`}
-															className="flex gap-4 w-full h-full"
-														>
-															<div className="relative w-16">
-																<Image
-																	src={user?.Agency?.agencyLogo}
-																	alt="Agency Logo"
-																	fill
-																	className="rounded-md object-contain"
-																/>
-															</div>
-															<div className="flex flex-col flex-1">
-																{user?.Agency?.name}
-																<span className="text-muted-foreground">
-																	{user?.Agency?.address}
-																</span>
-															</div>
-														</Link>
+															src={user?.Agency?.agencyLogo}
+															name={user?.Agency?.name}
+															address={user?.Agency?.address}
+														/>
 													) : (
 														<SheetClose asChild>
-															<Link
+															<AgencySidebar
 																href={`/agency/${user?.Agency?.id}`}
-																className="flex gap-4 w-full h-full"
-															>
-																<div className="relative w-16">
-																	<Image
-																		src={user?.Agency?.agencyLogo}
-																		alt="Agency Logo"
-																		fill
-																		className="rounded-md object-contain"
-																	/>
-																</div>
-																<div className="flex flex-col flex-1">
-																	{user?.Agency?.name}
-																	<span className="text-muted-foreground">
-																		{user?.Agency?.address}
-																	</span>
-																</div>
-															</Link>
+																src={user?.Agency?.agencyLogo}
+																name={user?.Agency?.name}
+																address={user?.Agency?.address}
+															/>
 														</SheetClose>
 													)}
 												</CommandItem>
@@ -171,46 +159,20 @@ const MenuOptions = ({
 											? subAccounts.map((subaccount) => (
 													<CommandItem key={subaccount.id}>
 														{defaultOpen ? (
-															<Link
+															<SubAccountSidebar
 																href={`/subaccount/${subaccount.id}`}
-																className="flex gap-4 w-full h-full"
-															>
-																<div className="relative w-16">
-																	<Image
-																		src={subaccount.subAccountLogo}
-																		alt="subaccount Logo"
-																		fill
-																		className="rounded-md object-contain"
-																	/>
-																</div>
-																<div className="flex flex-col flex-1">
-																	{subaccount.name}
-																	<span className="text-muted-foreground">
-																		{subaccount.address}
-																	</span>
-																</div>
-															</Link>
+																src={subaccount.subAccountLogo}
+																name={subaccount.name}
+																address={subaccount.address}
+															/>
 														) : (
 															<SheetClose asChild>
-																<Link
+																<SubAccountSidebar
 																	href={`/subaccount/${subaccount.id}`}
-																	className="flex gap-4 w-full h-full"
-																>
-																	<div className="relative w-16">
-																		<Image
-																			src={subaccount.subAccountLogo}
-																			alt="subaccount Logo"
-																			fill
-																			className="rounded-md object-contain"
-																		/>
-																	</div>
-																	<div className="flex flex-col flex-1">
-																		{subaccount.name}
-																		<span className="text-muted-foreground">
-																			{subaccount.address}
-																		</span>
-																	</div>
-																</Link>
+																	src={subaccount.subAccountLogo}
+																	name={subaccount.name}
+																	address={subaccount.address}
+																/>
 															</SheetClose>
 														)}
 													</CommandItem>
@@ -218,6 +180,31 @@ const MenuOptions = ({
 											: "No Accounts"}
 									</CommandGroup>
 								</CommandList>
+								{/* {(user?.role === "AGENCY_OWNER" ||
+									user?.role === "AGENCY_ADMIN") && (
+									<SheetClose>
+										<Button
+											className="w-full flex gap-2"
+											onClick={() => {
+												setOpen(
+													<CustomModal
+														title="Create A Subaccount"
+														subheading="You can switch between your agency account and the subaccount from the sidebar"
+													>
+														<SubAccountDetails
+															agencyDetails={user?.Agency as Agency}
+															userId={user?.id as string}
+															userName={user?.name}
+														/>
+													</CustomModal>
+												);
+											}}
+										>
+											<PlusCircleIcon size={15} />
+											Create Sub Account
+										</Button>
+									</SheetClose>
+								)} */}
 							</Command>
 						</PopoverContent>
 					</Popover>
@@ -227,7 +214,12 @@ const MenuOptions = ({
 						<Command className="rounded-lg overflow-visible bg-transparent">
 							<CommandInput placeholder="Search..." />
 							<CommandList className="py-4 overflow-visible">
-								<CommandEmpty>No Results Found</CommandEmpty>
+								<CommandEmpty>
+									<span className="flex flex-col items-center text-muted-foreground">
+										<SearchXIcon className="size-6 mb-2 items-center text-muted" />
+										No results found
+									</span>
+								</CommandEmpty>
 								<CommandGroup className="overflow-visible">
 									{sidebarOpt.map((sidebarOptions) => {
 										let val;
@@ -261,5 +253,3 @@ const MenuOptions = ({
 		</Sheet>
 	);
 };
-
-export default MenuOptions;

@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import "./globals.css";
 
 import { DM_Sans } from "next/font/google";
+import ModalProvider from "@/providers/modal-provider";
+import { Toast } from "@/components/ui/toast";
 const font = DM_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -25,7 +27,10 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					{children}
+					<ModalProvider>
+						{children}
+						<Toast />
+					</ModalProvider>
 				</ThemeProvider>
 			</body>
 		</html>

@@ -7,20 +7,29 @@ import {
 	SubAccountSidebarOption,
 } from "@prisma/client";
 import React, { useEffect, useMemo, useState } from "react";
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
-import { Button } from "../ui/button";
+import {
+	Sheet,
+	SheetClose,
+	SheetContent,
+	SheetTrigger,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import {
 	ChevronsUpDown,
 	Compass,
 	Menu,
 	PlusCircleIcon,
 	SearchXIcon,
-	UserSearchIcon,
+	UserX2Icon,
 } from "lucide-react";
 import clsx from "clsx";
-import { AspectRatio } from "../ui/aspect-ratio";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import Image from "next/image";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import {
 	Command,
 	CommandEmpty,
@@ -28,16 +37,17 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "../ui/command";
+} from "@/components/ui/command";
 import Link from "next/link";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
 import { icons } from "@/lib/constants";
 
 import AgencySidebar from "./agency-sidebar";
 import SubAccountSidebar from "./agency-sidebar";
+
 import { useModal } from "@/providers/modal-provider";
-import CustomModal from "../global/custom-modal";
-import SubAccountDetails from "../forms/sub-account-details";
+import CustomModal from "@/components/global/custom-modal";
+import SubAccountDetails from "@/components/forms/sub-account-details";
 
 type Props = {
 	defaultOpen?: boolean;
@@ -129,7 +139,7 @@ export const MenuOptions = ({
 								<CommandList className="pb-16">
 									<CommandEmpty>
 										<span className="flex flex-col items-center text-muted-foreground">
-											<UserSearchIcon className="size-6 mb-2 items-center text-muted" />
+											<UserX2Icon className="size-6 mb-2 items-center text-muted-foreground" />
 											No results found
 										</span>
 									</CommandEmpty>
@@ -220,7 +230,7 @@ export const MenuOptions = ({
 							<CommandList className="py-4 overflow-visible">
 								<CommandEmpty>
 									<span className="flex flex-col items-center text-muted-foreground">
-										<SearchXIcon className="size-6 mb-2 items-center text-muted" />
+										<SearchXIcon className="size-6 mb-2 items-center text-muted-foreground" />
 										No results found
 									</span>
 								</CommandEmpty>
@@ -233,12 +243,12 @@ export const MenuOptions = ({
 										if (result) val = <result.path />;
 										return (
 											<CommandItem
-												key={sidebarOptions.id}
+												key={id}
 												className="md:w-[350px] w-full"
 											>
 												<Link
 													href={sidebarOptions.link}
-													className="flex items-center gap-2 hover:bg-transparent rounded-md transition-all md:w-full w-[320px]"
+													className="flex items-center gap-2 hover:bg-transparent rounded-md transition-all md:w-full w-[350px]"
 												>
 													{val}
 													<span>{sidebarOptions.name}</span>

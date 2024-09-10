@@ -59,7 +59,7 @@ const InfoBar = ({ notifications, subAccountId, className, role }: Props) => {
 								<BellIcon size={17} />
 							</div>
 						</SheetTrigger>
-						<SheetContent className="mt-4 mr-4 pr-4 overflow-y-scroll">
+						<SheetContent className="mt-4 mr-4 pr-4 overflow-y-scroll custom-scrollbar">
 							<SheetHeader className="text-left">
 								<SheetTitle>Notifications</SheetTitle>
 								<SheetDescription>

@@ -136,7 +136,7 @@ export const MenuOptions = ({
 						<PopoverContent className="w-80 h-full mt-4 z-[200]">
 							<Command className="rounded-lg">
 								<CommandInput placeholder="Search Accounts..." />
-								<CommandList className="pb-16">
+								<CommandList className="pb-16 custom-scrollbar">
 									<CommandEmpty>
 										<span className="flex flex-col items-center text-muted-foreground">
 											<UserX2Icon className="size-6 mb-2 items-center text-muted-foreground" />

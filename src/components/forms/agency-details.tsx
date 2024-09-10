@@ -46,7 +46,7 @@ import {
 } from "@/lib/queries";
 import { Switch } from "@/components/ui/switch";
 import Loading from "../global/loading";
-import { v4 } from "uuid";
+import { v4 as uuidv4} from "uuid";
 interface AgencyDetailsProps {
 	data?: Partial<Agency>;
 }
@@ -123,7 +123,7 @@ export const AgencyDetails = ({ data }: AgencyDetailsProps) => {
 			});
 			if (!data?.id) {
 				const response = await upsertAgency({
-					id: data?.id ? data.id : v4(),
+					id: data?.id ? data.id : uuidv4(),
 					// customerId: data?.customerId,
 					address: values.address,
 					agencyLogo: values.agencyLogo,

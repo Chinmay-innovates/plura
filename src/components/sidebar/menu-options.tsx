@@ -35,6 +35,9 @@ import { icons } from "@/lib/constants";
 
 import AgencySidebar from "./agency-sidebar";
 import SubAccountSidebar from "./agency-sidebar";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "../global/custom-modal";
+import SubAccountDetails from "../forms/sub-account-details";
 
 type Props = {
 	defaultOpen?: boolean;
@@ -55,6 +58,7 @@ export const MenuOptions = ({
 	user,
 	defaultOpen,
 }: Props) => {
+	const { setOpen } = useModal();
 	const [isMounted, setIsMounted] = useState(false);
 
 	const openState = useMemo(
@@ -119,7 +123,7 @@ export const MenuOptions = ({
 								</div>
 							</Button>
 						</PopoverTrigger>
-						<PopoverContent className="w-80 h-80 mt-4 z-[200]">
+						<PopoverContent className="w-80 h-full mt-4 z-[200]">
 							<Command className="rounded-lg">
 								<CommandInput placeholder="Search Accounts..." />
 								<CommandList className="pb-16">
@@ -180,9 +184,9 @@ export const MenuOptions = ({
 											: "No Accounts"}
 									</CommandGroup>
 								</CommandList>
-								{/* {(user?.role === "AGENCY_OWNER" ||
+								{(user?.role === "AGENCY_OWNER" ||
 									user?.role === "AGENCY_ADMIN") && (
-									<SheetClose>
+									<SheetClose asChild>
 										<Button
 											className="w-full flex gap-2"
 											onClick={() => {
@@ -201,10 +205,10 @@ export const MenuOptions = ({
 											}}
 										>
 											<PlusCircleIcon size={15} />
-											Create Sub Account
+											Create a sub account
 										</Button>
 									</SheetClose>
-								)} */}
+								)}
 							</Command>
 						</PopoverContent>
 					</Popover>
@@ -226,13 +230,11 @@ export const MenuOptions = ({
 										const result = icons.find(
 											(icon) => icon.value === sidebarOptions.icon
 										);
-										if (result) {
-											val = <result.path />;
-										}
+										if (result) val = <result.path />;
 										return (
 											<CommandItem
 												key={sidebarOptions.id}
-												className="md:w-[320px] w-full"
+												className="md:w-[350px] w-full"
 											>
 												<Link
 													href={sidebarOptions.link}

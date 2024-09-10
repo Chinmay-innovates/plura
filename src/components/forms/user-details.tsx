@@ -152,7 +152,7 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
 		if (response) {
 			toast({
 				title: "Success",
-				description: "The request was successfull",
+				description: "The request was successfully",
 			});
 			if (subAccountPermissions) {
 				subAccountPermissions.Permissions.find((perm) => {

@@ -135,24 +135,11 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
 			subAccountId,
 			val
 		);
-		if (type === "agency") {
-			await saveActivityLogsNotification({
-				agencyId: authUserData?.Agency?.id,
-				description: `Gave ${userData?.name} access to | ${
-					subAccountPermissions?.Permissions.find(
-						(p) => p.subAccountId === subAccountId
-					)?.SubAccount.name
-				} `,
-				subAccountId: subAccountPermissions?.Permissions.find(
-					(p) => p.subAccountId === subAccountId
-				)?.SubAccount.id,
-			});
-		}
 
 		if (response) {
 			toast({
 				title: "Success",
-				description: "The request was successfully",
+				description: "The request was successfully sent",
 			});
 			if (subAccountPermissions) {
 				subAccountPermissions.Permissions.find((perm) => {
@@ -169,6 +156,21 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
 				description: "Could not update permissions",
 			});
 		}
+		if (type === "agency") {
+			await saveActivityLogsNotification({
+				agencyId: authUserData?.Agency?.id,
+				description: `Gave ${userData?.name} access to | ${
+					subAccountPermissions?.Permissions.find(
+						(p) => p.subAccountId === subAccountId
+					)?.SubAccount.name
+				} `,
+				subAccountId: subAccountPermissions?.Permissions.find(
+					(p) => p.subAccountId === subAccountId
+				)?.SubAccount.id,
+			});
+		}
+		console.log(response);
+
 		router.refresh();
 		setLoadingPermissions(false);
 	};
@@ -206,7 +208,7 @@ const UserDetails = ({ id, type, subAccounts, userData }: Props) => {
 	};
 
 	return (
-		<Card className="w-full">
+		<Card className="w-full mt-3">
 			<CardHeader>
 				<CardTitle>User Details</CardTitle>
 				<CardDescription>Add or update your information</CardDescription>

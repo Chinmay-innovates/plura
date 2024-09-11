@@ -20,13 +20,9 @@ const AgencyIdLayout = async ({ children, params }: LayoutProps) => {
 	const agencyId = await verifyAndAcceptInvitation();
 	const user = await currentUser();
 
-	if (!user) {
-		return redirect("/");
-	}
+	if (!user) return redirect("/");
 
-	if (!agencyId) {
-		return redirect("/agency");
-	}
+	if (!agencyId) return redirect("/agency");
 
 	if (
 		user.privateMetadata.role !== "AGENCY_OWNER" &&

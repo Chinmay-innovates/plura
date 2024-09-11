@@ -35,7 +35,6 @@ export const getAuthUserDetails = async () => {
 export const verifyAndAcceptInvitation = async () => {
 	const user = await currentUser();
 	if (!user) return redirect("/sign-in");
-
 	const invitationExists = await db.invitation.findUnique({
 		where: {
 			email: user.emailAddresses[0].emailAddress,
@@ -45,21 +44,21 @@ export const verifyAndAcceptInvitation = async () => {
 
 	if (invitationExists) {
 		const userDetails = await createTeamUser(invitationExists.agencyId, {
-			id: user.id,
-			avatarUrl: user.imageUrl,
-			name: `${user.firstName} ${user.lastName}`,
-			email: user.emailAddresses[0].emailAddress,
+			email: invitationExists.email,
 			agencyId: invitationExists.agencyId,
+			avatarUrl: user.imageUrl,
+			id: user.id,
+			name: `${user.firstName} ${user.lastName}`,
 			role: invitationExists.role,
 			createdAt: new Date(),
 			updatedAt: new Date(),
 		});
-
 		await saveActivityLogsNotification({
 			agencyId: invitationExists?.agencyId,
 			description: `Joined`,
 			subAccountId: undefined,
 		});
+
 		if (userDetails) {
 			await clerkClient.users.updateUserMetadata(user.id, {
 				privateMetadata: {
@@ -79,7 +78,6 @@ export const verifyAndAcceptInvitation = async () => {
 				email: user.emailAddresses[0].emailAddress,
 			},
 		});
-
 		return agency ? agency.agencyId : null;
 	}
 };
@@ -111,18 +109,17 @@ export const saveActivityLogsNotification = async ({
 				},
 			},
 		});
-
-		if (response) userData = response;
+		if (response) {
+			userData = response;
+		}
 	} else {
 		userData = await db.user.findUnique({
-			where: {
-				email: authUser.emailAddresses[0].emailAddress,
-			},
+			where: { email: authUser?.emailAddresses[0].emailAddress },
 		});
 	}
 
 	if (!userData) {
-		console.error("Could not find user");
+		console.log("Could not find a user");
 		return;
 	}
 
@@ -130,16 +127,14 @@ export const saveActivityLogsNotification = async ({
 	if (!foundAgencyId) {
 		if (!subAccountId) {
 			throw new Error(
-				"You need to provide alteast an agencyId or a subAccountId"
+				"You need to provide atleast an agency Id or subaccount Id"
 			);
 		}
 		const response = await db.subAccount.findUnique({
 			where: { id: subAccountId },
 		});
-
 		if (response) foundAgencyId = response.agencyId;
 	}
-
 	if (subAccountId) {
 		await db.notification.create({
 			data: {
@@ -155,9 +150,7 @@ export const saveActivityLogsNotification = async ({
 					},
 				},
 				SubAccount: {
-					connect: {
-						id: subAccountId,
-					},
+					connect: { id: subAccountId },
 				},
 			},
 		});
@@ -179,7 +172,6 @@ export const saveActivityLogsNotification = async ({
 		});
 	}
 };
-
 export const updateAgencyDetails = async (
 	agencyId: string,
 	agencyDetails: Partial<Agency>
@@ -407,7 +399,7 @@ export const updateUser = async (user: Partial<User>) => {
 };
 
 export const changeUserPermissions = async (
-	permissionId: string,
+	permissionId: string | undefined,
 	userEmail: string,
 	subAccountId: string,
 	permission: boolean
@@ -427,7 +419,6 @@ export const changeUserPermissions = async (
 		console.log("🔴Could not change persmission", error);
 	}
 };
-
 export const getSubaccountDetails = async (subaccountId: string) => {
 	const response = await db.subAccount.findUnique({
 		where: {
@@ -472,11 +463,15 @@ export const sendInvitation = async (
 	email: string,
 	agencyId: string
 ) => {
-	const resposne = await db.invitation.create({
-		data: { email, agencyId, role },
-	});
+	let response;
 
 	try {
+		// Create a database entry first
+		response = await db.invitation.create({
+			data: { email, agencyId, role },
+		});
+
+		// Create the invitation via Clerk
 		const invitation = await clerkClient.invitations.createInvitation({
 			emailAddress: email,
 			redirectUrl: process.env.NEXT_PUBLIC_URL!,
@@ -485,10 +480,24 @@ export const sendInvitation = async (
 				role,
 			},
 		});
+
+		// Optionally log or return the Clerk invitation result if needed
+		console.log("Clerk invitation created:", invitation);
 	} catch (error) {
-		console.log(error);
+		console.error("Error sending invitation:", error);
+
+		// Handle rollback or clean-up if necessary
+		// For example, delete the database entry if Clerk invitation creation fails
+
+		// Optional: Delete the failed database entry if needed
+		if (response) {
+			await db.invitation.delete({
+				where: { email },
+			});
+		}
+
 		throw error;
 	}
 
-	return resposne;
+	return response;
 };
